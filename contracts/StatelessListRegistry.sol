@@ -8,6 +8,7 @@ contract StatelessListRegistry is Ownable {
     mapping(bytes32 => address) public listToProxy;
 
     event ListCreated(bytes32 indexed list, address proxy);
+    event ListArchived(bytes32 indexed list);
     event ElementAdded(bytes32 indexed list, bytes32 newElement);
     event ElementRemoved(bytes32 indexed list, bytes32 oldElement);
     event ElementUpdated(bytes32 indexed list, bytes32 oldElement, bytes32 newElement);
@@ -33,5 +34,13 @@ contract StatelessListRegistry is Ownable {
         } else {
             emit ElementUpdated(list, oldElement, newElement);
         }
+    }
+
+    function archiveList(bytes32 list) external {
+        if (msg.sender != owner && msg.sender != listToProxy[list]) {
+            revert MustBeCalledByOwnerOrProxy();
+        }
+
+        emit ListArchived(list);
     }
 }
