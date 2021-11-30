@@ -29,6 +29,11 @@ contract ListProxy {
         listRegistry.update(list, oldElement, newElement);
     }
 
+    // Helper to reduce calldata
+    function add(bytes32 newElement) external onlyOwner {
+        listRegistry.update(list, bytes32(0), newElement);
+    }
+
     function batchUpdate(bytes32[] calldata oldElements, bytes32[] calldata newElements) external onlyOwner {
         if (oldElements.length != newElements.length) {
             revert MismatchedLength();
@@ -36,6 +41,13 @@ contract ListProxy {
 
         for (uint256 i = 0; i < oldElements.length; i += 1) {
             listRegistry.update(list, oldElements[i], newElements[i]);
+        }
+    }
+
+    // Helper to reduce calldata
+    function batchAdd(bytes32[] calldata newElements) external onlyOwner {
+        for (uint256 i = 0; i < newElements.length; i += 1) {
+            listRegistry.update(list, bytes32(0), newElements[i]);
         }
     }
 }
